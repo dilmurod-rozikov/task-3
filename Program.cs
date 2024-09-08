@@ -9,26 +9,23 @@ namespace Client
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Please, enter odd number of moves!");
-            Console.WriteLine("Please, use empty space or comma to separte the words!");
-
-            while (true)
+            if (args.Length == 0)
             {
-                string? moves = Console.ReadLine();
-                if (moves == null || moves.Length == 0)
-                {
-                    Console.WriteLine("Please, enter at least 1 move.");
-                    continue;
-                }    
-
-                string[] movesArr = moves!.Split([',', ' '], StringSplitOptions.RemoveEmptyEntries);
-                if (movesArr.Length % 2 == 0)
-                {
-                    Console.WriteLine("The number of moves must be odd, in your case it is: " + movesArr.Length);
-                    continue;
-                }
-                
+                Console.WriteLine("Please provide a moves as a command line argument.");
+                return;
             }
+            string input = args[0];
+
+            if (input == null || input.Length == 0)
+                Console.WriteLine("Please, enter at least 1 move.");
+            
+            if (args.Length % 2 == 0)
+                Console.WriteLine("The number of moves must be odd, in your case it is: " + args.Length);
+
+            Console.WriteLine("Choose your move!");
+            for(int i = 1; i <= args.Length; i++)
+                Console.WriteLine(i + " - " + args[i-1]);
+            
         }
     }
 }
