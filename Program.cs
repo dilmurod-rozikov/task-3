@@ -8,57 +8,71 @@ namespace Task3
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Please provide a moves as a command line argument.");
+                Console.WriteLine("Please provide a move as a command line argument.");
                 return;
             }
-            string? input = args[0];
+            List<string> moves = new(args);
 
-            if (input == null || input.Length == 0)
+            if (moves.Count == 0)
+            {
                 Console.WriteLine("Please, enter at least 1 move.");
+                return;
+            }
 
-            if (args.Length % 2 == 0)
-                Console.WriteLine("The number of moves must be odd, in your case it is: " + args.Length);
+            if (moves.Count % 2 == 0)
+            {
+                Console.WriteLine("The number of moves must be odd, in your case it is: " + moves.Count);
+                return;
+            }
 
-            Random random= new();
-            int computer = random.Next(args.Length);
+            Random random = new();
+            int computer = random.Next(moves.Count);
 
-            //generate HMAC
-            List<string> moves = args.ToList();
+            // Generate HMAC
             byte[] key = KeyGenerator.GenerateKey();
-            string hmac = HMACGenerator.GenerateHMAC(moves[computer-1], key);
+            string hmac = HMACGenerator.GenerateHMAC(moves[computer], key);
 
+            Console.WriteLine("HMAC: " + hmac);
             Console.WriteLine("Choose your move by its id!");
-            for (int i = 1; i <= args.Length; i++)
-                Console.WriteLine(i + " - " + args[i - 1]);
+            for (int i = 0; i < moves.Count; i++)
+                Console.WriteLine(i + 1 + " - " + moves[i]);
 
             Console.WriteLine("0 - exit");
             Console.WriteLine("? - help");
-            char player;
+
             while (true)
             {
-                player = Convert.ToChar(Console.Read());
-                if (player == '0')
+                string? input = Console.ReadLine();
+
+                if (input == "0")
                     break;
 
-                if(player == '?')
+                if (input == "?")
                 {
-                    TableGenerator tg = new TableGenerator(moves);
+                    TableGenerator tg = new(moves);
                     Console.WriteLine(tg.GenerateTable());
+                    Console.WriteLine("Choose your move: ");
+                    continue;
                 }
 
-                if (computer > player)
-                    Console.WriteLine("Computer wins!");
-                else if (computer == player)
-                    Console.WriteLine("Draw!");
-                else if (player > computer)
-                    Console.WriteLine("You win!!!");
-                else
-                    Console.WriteLine("Wrong move");
+                if (int.TryParse(input, out int player) && player >= 1 && player <= moves.Count)
+                {
+                    player--; 
 
-                Console.WriteLine("Your move: " + args[player - 1]);
-                Console.WriteLine("Computer's move: " + args[computer]);
-                Console.WriteLine("HMAC key: " + BitConverter.ToString(key).Replace("-", "").ToLower());
-                break;
+                    if (computer > player)
+                        Console.WriteLine("Computer wins!");
+                    else if (computer == player)
+                        Console.WriteLine("Draw!");
+                    else
+                        Console.WriteLine("You win!!!");
+
+                    Console.WriteLine("Your move: " + moves[player]);
+                    Console.WriteLine("Computer's move: " + moves[computer]);
+                    Console.WriteLine("HMAC key: " + BitConverter.ToString(key).Replace("-", "").ToLower());
+                    break;
+                }
+                else
+                    Console.WriteLine("Wrong move, try again.");
             }
         }
     }

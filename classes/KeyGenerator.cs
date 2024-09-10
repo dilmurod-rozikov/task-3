@@ -1,15 +1,16 @@
 using System.Security.Cryptography;
 
-public class KeyGenerator
+namespace Task3.classes
 {
-    public static byte[] GenerateKey()
+    public class KeyGenerator
     {
-        byte[] key = new byte[32];
-        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+        public static byte[] GenerateKey()
         {
+            byte[] key = new byte[32];
+            using RandomNumberGenerator rng = RandomNumberGenerator.Create();
             rng.GetBytes(key);
-        }
 
-        return key;
+            return key;
+        }
     }
 }
